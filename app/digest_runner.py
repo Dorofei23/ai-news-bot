@@ -13,7 +13,7 @@ from app.news.deduplicator import deduplicate_articles
 from app.news.fetcher import fetch_articles_from_feeds
 from app.news.ranker import rank_for_openai_window
 from app.news.summarizer import build_digest_with_openai
-from app.telegram.formatter import format_digest_html, split_telegram_messages
+from app.telegram.formatter import DIGEST_TITLE, format_digest_html, split_telegram_messages
 from app.utils.time_utils import format_digest_date
 
 logger = logging.getLogger(__name__)
@@ -27,12 +27,15 @@ def _build_digest_html_sync(settings: Settings) -> str:
     if not articles:
         date = format_digest_date(settings.timezone)
         return (
-            f"🤖 <b>AI News Digest — {date}</b>\n\n"
+            f"🤖 <b>{DIGEST_TITLE} — {date}</b>\n\n"
             "<i>No articles found in the current time window. "
             "Try widening LOOKBACK_HOURS or check your RSS sources.</i>"
         )
 
-    deduped = deduplicate_articles(articles)
+    deduped = deduplicate_articles(
+        articles,
+        open_access_host_hints=settings.resolved_open_access_host_hints(),
+    )
     logger.info("%s articles after deduplication", len(deduped))
 
     candidates = rank_for_openai_window(
@@ -44,8 +47,8 @@ def _build_digest_html_sync(settings: Settings) -> str:
     date = format_digest_date(settings.timezone)
     if not digest_items:
         return (
-            f"🤖 <b>AI News Digest — {date}</b>\n\n"
-            "<i>No qualifying AI stories were selected today "
+            f"🤖 <b>{DIGEST_TITLE} — {date}</b>\n\n"
+            "<i>No qualifying stories were selected today "
             "(model returned empty or API error — see logs).</i>"
         )
 

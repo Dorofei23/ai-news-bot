@@ -35,12 +35,13 @@ def fetch_articles_from_feeds(settings: Settings) -> list[Article]:
     feeds = list(dict.fromkeys(feeds))  # preserve order, unique
     window = window_start(settings.lookback_hours)
     articles: list[Article] = []
+    paywall_hints = settings.resolved_paywall_host_hints()
 
     timeout = httpx.Timeout(settings.http_timeout_seconds)
     with httpx.Client(timeout=timeout, follow_redirects=True) as client:
         for feed_url in feeds:
             try:
-                batch = _fetch_single_feed(client, feed_url, window)
+                batch = _fetch_single_feed(client, feed_url, window, paywall_hints)
                 articles.extend(batch)
                 logger.info("Fetched %s articles from %s", len(batch), feed_url)
             except Exception:
@@ -53,6 +54,7 @@ def _fetch_single_feed(
     client: httpx.Client,
     feed_url: str,
     window_start_utc,
+    paywall_host_hints: frozenset[str],
 ) -> list[Article]:
     """HTTP GET + feedparser for one feed URL."""
 
@@ -78,7 +80,12 @@ def _fetch_single_feed(
     for entry in parsed.entries or []:
         if not isinstance(entry, dict):
             continue
-        art = entry_to_article(entry, feed_title=feed_title, feed_href=href)
+        art = entry_to_article(
+            entry,
+            feed_title=feed_title,
+            feed_href=href,
+            paywall_host_hints=paywall_host_hints,
+        )
         if art is None:
             continue
         if art.published_at is not None and art.published_at < window_start_utc:

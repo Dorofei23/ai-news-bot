@@ -16,7 +16,8 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if update.message is None:
         return
     await update.message.reply_text(
-        "Hi! I post a daily AI news digest.\n"
+        "Hi! I post a daily digest focused on AI for UI engineering, "
+        "plus a few high-signal frontend stories.\n"
         "Commands:\n"
         "/send — build and send today's digest to this chat\n"
         "/health — bot status\n"

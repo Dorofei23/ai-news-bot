@@ -7,6 +7,8 @@ import re
 
 from app.news.summarizer import DigestItem
 
+DIGEST_TITLE = "AI × Frontend Digest"
+
 
 def _esc(text: str) -> str:
     return html.escape(text, quote=False)
@@ -19,7 +21,7 @@ def format_digest_html(items: list[DigestItem], date_label: str) -> str:
     Telegram HTML: https://core.telegram.org/bots/api#html-style
     """
     lines: list[str] = [
-        f"🤖 {_esc('AI News Digest')} — {_esc(date_label)}",
+        f"🤖 {_esc(DIGEST_TITLE)} — {_esc(date_label)}",
         "",
     ]
     for n, it in enumerate(items, start=1):
@@ -30,6 +32,10 @@ def format_digest_html(items: list[DigestItem], date_label: str) -> str:
         lines.append(
             f"{_esc('Source')}: <a href=\"{href_attr}\">{_esc(it.source)}</a>"
         )
+        if it.paywall_likely:
+            lines.append(
+                "<i>Full article may require a subscription (open summary only in the feed).</i>"
+            )
         lines.append("")
 
     lines.append(
