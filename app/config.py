@@ -9,15 +9,26 @@ from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-# Default RSS sources: AI industry news plus frontend / JS / platform feeds.
+# Default RSS sources: AI news, vendor updates, dev tooling changelogs, frontend feeds.
 # Override via NEWS_RSS_FEEDS JSON in .env.
 DEFAULT_RSS_FEEDS: list[str] = [
     "https://techcrunch.com/category/artificial-intelligence/feed/",
     "https://venturebeat.com/category/ai/feed/",
     "https://www.technologyreview.com/topic/artificial-intelligence/feed/",
     "https://openai.com/blog/rss.xml",
+    "https://openai.com/news/rss.xml",
     "https://www.artificialintelligence-news.com/feed/",
     "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
+    "https://blog.google/innovation-and-ai/technology/ai/rss/",
+    "https://deepmind.google/blog/rss.xml",
+    "https://huggingface.co/blog/feed.xml",
+    "https://github.blog/feed/",
+    "https://cursor.com/changelog/rss.xml",
+    "https://blogs.nvidia.com/feed/",
+    "https://www.docker.com/feed/",
+    "https://developers.cloudflare.com/changelog/rss/index.xml",
+    "https://blog.packagist.com/rss/",
+    "https://blog.jetbrains.com/feed/",
     "https://react.dev/rss.xml",
     "https://web.dev/feed.xml",
     "https://javascriptweekly.com/rss/",
@@ -61,6 +72,13 @@ DEFAULT_OPEN_ACCESS_HOST_HINTS: list[str] = [
     "increment.com",
     "engineering.fb.com",
     "netflixtechblog.com",
+    "huggingface.co",
+    "deepmind.google",
+    "cursor.com",
+    "docker.com",
+    "cloudflare.com",
+    "jetbrains.com",
+    "packagist.org",
 ]
 
 
@@ -88,7 +106,7 @@ class Settings(BaseSettings):
     lookback_hours: int = Field(36, ge=1, le=168, alias="LOOKBACK_HOURS")
     max_items_in_digest: int = Field(8, ge=1, le=15, alias="MAX_ITEMS_IN_DIGEST")
     max_candidates_for_openai: int = Field(
-        35, ge=5, le=80, alias="MAX_CANDIDATES_FOR_OPENAI"
+        50, ge=5, le=120, alias="MAX_CANDIDATES_FOR_OPENAI"
     )
     http_timeout_seconds: float = Field(20.0, ge=5.0, le=120.0, alias="HTTP_TIMEOUT_SECONDS")
     log_level: str = Field("INFO", alias="LOG_LEVEL")

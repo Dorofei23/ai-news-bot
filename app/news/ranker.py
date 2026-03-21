@@ -12,6 +12,7 @@ _AI_KEYWORDS = re.compile(
     r"\b("
     r"ai\b|a\.i\.|artificial intelligence|machine learning|\bml\b|deep learning|"
     r"neural|llm|large language|gpt|openai|anthropic|claude|gemini|"
+    r"mistral|cohere|deepmind|huggingface|hugging face|"
     r"copilot|chatbot|generative|diffusion|transformer|nvidia|cuda|"
     r"foundation model|inference|tokenizer|embedding|agentic|"
     r"robotics|autonomous vehicle|computer vision|speech recognition"
@@ -34,6 +35,18 @@ _FE_KEYWORDS = re.compile(
     re.IGNORECASE,
 )
 
+# Releases, changelogs, and vendor updates developers track (Composer, Cursor, APIs, etc.).
+_DEV_PRODUCT_KEYWORDS = re.compile(
+    r"\b("
+    r"changelog|release notes|now available|generally available|ga\b|"
+    r"major release|minor release|patch release|"
+    r"\bcomposer\b|\bpackagist\b|gradle|pnpm|yarn\b|npm\b|"
+    r"\bcursor\b|jetbrains|vscode|visual studio code|docker|kubernetes|"
+    r"sdk\b|rest api|graphql api|model api|inference api"
+    r")\b",
+    re.IGNORECASE,
+)
+
 _MIN = datetime.min.replace(tzinfo=UTC)
 
 
@@ -46,7 +59,7 @@ def _age_hours(published: datetime | None, now: datetime) -> float:
 
 def heuristic_score(article: Article, *, now: datetime | None = None) -> float:
     """
-    Score articles for AI and/or frontend relevance and recency.
+    Score articles for AI, frontend, dev-product news, and recency.
 
     Higher is better. Used to trim the candidate list before the OpenAI step.
     """
@@ -56,11 +69,14 @@ def heuristic_score(article: Article, *, now: datetime | None = None) -> float:
 
     has_ai = bool(_AI_KEYWORDS.search(text))
     has_fe = bool(_FE_KEYWORDS.search(text))
+    has_dev = bool(_DEV_PRODUCT_KEYWORDS.search(text))
 
     if has_ai:
         score += 4.0
     if has_fe:
         score += 3.0
+    if has_dev:
+        score += 2.5
     if has_ai and has_fe:
         score += 2.0
 
@@ -69,6 +85,8 @@ def heuristic_score(article: Article, *, now: datetime | None = None) -> float:
         "ai" in title_lower
         or "gpt" in title_lower
         or "openai" in title_lower
+        or "anthropic" in title_lower
+        or "claude" in title_lower
         or "react" in title_lower
         or "typescript" in title_lower
     ):
