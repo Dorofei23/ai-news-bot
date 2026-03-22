@@ -28,6 +28,13 @@ def format_digest_html(items: list[DigestItem], date_label: str) -> str:
         safe_url = it.url.strip()
         lines.append(f"<b>{n}. {_esc(it.headline)}</b>")
         lines.append(_esc(it.summary))
+        score_line = (
+            f"📊 {_esc('Usefulness')} (UI / React / RN): "
+            f"<b>{it.usefulness_score}/10</b>"
+        )
+        if it.usefulness_note:
+            score_line += f" — <i>{_esc(it.usefulness_note)}</i>"
+        lines.append(score_line)
         href_attr = html.escape(safe_url, quote=True)
         lines.append(
             f"{_esc('Source')}: <a href=\"{href_attr}\">{_esc(it.source)}</a>"

@@ -1,9 +1,21 @@
 {
   "version": 1,
   "transcripts": {
+    "/Users/dorofeisheiko/.cursor/projects/Users-dorofeisheiko-ai-news-telegram-bot/agent-transcripts/2192872e-796c-40cd-8e0d-beb5746ebc2e/2192872e-796c-40cd-8e0d-beb5746ebc2e.jsonl": {
+      "mtimeMs": 1774092365000,
+      "lastProcessedAt": "2026-03-21T11:30:00.000Z"
+    },
+    "/Users/dorofeisheiko/.cursor/projects/Users-dorofeisheiko-ai-news-telegram-bot/agent-transcripts/29c88501-bcd5-484f-b490-15fb320d4afe/29c88501-bcd5-484f-b490-15fb320d4afe.jsonl": {
+      "mtimeMs": 1774033040000,
+      "lastProcessedAt": "2026-03-21T11:30:00.000Z"
+    },
+    "/Users/dorofeisheiko/.cursor/projects/Users-dorofeisheiko-ai-news-telegram-bot/agent-transcripts/a6dffb66-4e3e-41a4-a3f8-e0638366a1f3/a6dffb66-4e3e-41a4-a3f8-e0638366a1f3.jsonl": {
+      "mtimeMs": 1774032523000,
+      "lastProcessedAt": "2026-03-21T11:30:00.000Z"
+    },
     "/Users/dorofeisheiko/.cursor/projects/Users-dorofeisheiko-ai-news-telegram-bot/agent-transcripts/adcae678-002b-49d1-a68a-4ca82e654950/adcae678-002b-49d1-a68a-4ca82e654950.jsonl": {
-      "mtimeMs": 1774031327000,
-      "lastProcessedAt": "2026-03-20T18:29:00.000Z"
+      "mtimeMs": 1774031502000,
+      "lastProcessedAt": "2026-03-21T11:30:00.000Z"
     }
   }
 }

@@ -13,11 +13,16 @@ def test_format_digest_escapes_html() -> None:
             summary='Line & co.',
             source='Source "X"',
             url="https://example.com?q=1&r=2",
+            usefulness_score=8,
+            usefulness_note='Strong <tag> & tooling fit',
         )
     ]
     text = format_digest_html(items, "Jan 1, 2026")
     assert "<script>" not in text
     assert "&amp;" in text or "q=1&amp;r=2" in text
+    assert "8/10" in text
+    assert "<tag>" not in text
+    assert "8/10" in text and "Strong" in text
 
 
 def test_split_telegram_messages_single_chunk() -> None:

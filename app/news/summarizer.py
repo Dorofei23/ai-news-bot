@@ -24,10 +24,22 @@ class DigestItem:
     source: str
     url: str
     paywall_likely: bool = False
+    usefulness_score: int = 5
+    usefulness_note: str = ""
 
 
 def _strip_html(text: str) -> str:
     return re.sub(r"<[^>]+>", " ", text)
+
+
+def _parse_usefulness_score(raw: object) -> int:
+    if raw is None:
+        return 5
+    try:
+        n = int(raw)
+    except (TypeError, ValueError):
+        return 5
+    return max(1, min(10, n))
 
 
 def build_digest_with_openai(
@@ -76,8 +88,15 @@ def build_digest_with_openai(
         "do not invent details that are not in that text. "
         "Each summary must be one short sentence in English; when useful, add a brief hint "
         "of why it matters for frontend or tooling workflows. "
+        "For every chosen item also set usefulness_score: an integer from 1 (marginal) to 10 "
+        "(highly actionable or strategically important for a senior UI engineer working in "
+        "React, React Native, and modern web stacks). "
+        "Add usefulness_note: one short English clause (not a full sentence) explaining why "
+        "that score fits this reader profile — e.g. tooling impact, RN/web platform, or "
+        "design-system relevance. "
         "Respond with compact JSON only, no markdown fences, matching this schema: "
-        '{"items":[{"index":0,"summary":"one short sentence in English"}]} '
+        '{"items":[{"index":0,"summary":"one short sentence in English",'
+        '"usefulness_score":8,"usefulness_note":"short clause"}]} '
         "Use each chosen article's original title — do not invent URLs. "
         "Order items from most to least important."
     )
@@ -91,7 +110,7 @@ def build_digest_with_openai(
                 {"role": "user", "content": user},
             ],
             temperature=0.3,
-            max_tokens=2000,
+            max_tokens=2400,
             response_format={"type": "json_object"},
         )
     except Exception:
@@ -122,6 +141,8 @@ def build_digest_with_openai(
         art = by_index.get(idx)
         if art is None or not summary:
             continue
+        score = _parse_usefulness_score(row.get("usefulness_score"))
+        note = str(row.get("usefulness_note", "")).strip()
         out.append(
             DigestItem(
                 headline=_strip_html(art.title).strip(),
@@ -129,6 +150,8 @@ def build_digest_with_openai(
                 source=art.source,
                 url=art.url,
                 paywall_likely=art.paywall_likely,
+                usefulness_score=score,
+                usefulness_note=note,
             )
         )
 
